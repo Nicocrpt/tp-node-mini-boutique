@@ -1,20 +1,36 @@
 import ProductBadge from "./ProductBadge"
+import favoriteOff from "../assets/favorite-off.svg";
+import favoriteOn from "../assets/favorite-on.svg";
 
-function ProductCard({ name, price, category, image, description, available }) {
-
-    const availableStyle = {
-        opacity: available ? 1 : 0.3,
-        cursor: available ? 'pointer': 'default',
-        filter: `grayscale(${available ? 0 : 100})`
+function ProductCard({ product, onSelectProduct, isSelected, onToggleFavorite, isFavorite }) {
+    
+    const handleSelectionClick = () => {
+        if (!product.available) { return }
+        onSelectProduct(product);
     }
+
+    const handleFavoriteClick = (e) => {
+        e.stopPropagation()
+        if (!product.available) { return }
+        onToggleFavorite(product.id)
+    }
+
     return (
-        <article className="product-card" style={availableStyle}>
-            <img src={image} alt={name} />
+        <article 
+            className={`product-card ${product.available ? '' : 'disabled'} ${isSelected ? 'selected' : ''}`}
+            onClick={handleSelectionClick}
+        >
+            <img 
+                className={`favorite-icon ${isFavorite ? 'unselected' : ''}`} 
+                src={isFavorite ? favoriteOn : favoriteOff} 
+                alt="favorite" 
+                onClick={(e) => handleFavoriteClick(e)}
+            />
+            <img className="product-image" src={product.image} alt={name} />
             <div>
-                <h3>{name}</h3>
-                <ProductBadge category={category}/>
-                <strong>{price} €</strong>
-                <p><i>{description}</i></p>
+                <h3>{product.name}</h3>
+                <ProductBadge category={product.category}/>
+                <strong>{product.price} €</strong>
             </div>
         </article>
     )
