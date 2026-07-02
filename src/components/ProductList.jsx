@@ -1,45 +1,37 @@
 import ProductCard from "./ProductCard";
 
-function ProductList({ products, onSelectProduct, selectedProductId, onToggleFavorite, favoriteProductsIds }) {
+function ProductList({ products, onSelectProduct, selectedProductId, onToggleFavorite, favoriteProductsIds, selectedCategory, onCategoryChange }) {
+    const categories = [...new Set(products.map((product) => product.category))];
+    const visibleProducts = selectedCategory
+        ? products.filter((product) => product.category === selectedCategory)
+        : products;
+
     return (
         <section className="product-list">
-            <h2>Nos produits</h2>
+            <div className="product-list-head">
+                <h2>Nos produits</h2>
+                <select
+                    className="category-filter"
+                    value={selectedCategory ?? 'all'}
+                    onChange={(e) => onCategoryChange(e.target.value === 'all' ? null : e.target.value)}
+                >
+                    <option value="all">Toutes les catégories</option>
+                    {categories.map((category) => (
+                        <option key={category} value={category}>{category}</option>
+                    ))}
+                </select>
+            </div>
             <div className="products-grid">
-                <ProductCard 
-                    product={products[0]} 
-                    onSelectProduct={onSelectProduct} 
-                    isSelected={selectedProductId === products[0].id}
-                    isFavorite={favoriteProductsIds.includes(products[0].id)}
-                    onToggleFavorite={onToggleFavorite}
-                />
-                <ProductCard 
-                    product={products[1]} 
-                    onSelectProduct={onSelectProduct} 
-                    isSelected={selectedProductId === products[1].id}
-                    isFavorite={favoriteProductsIds.includes(products[1].id)}
-                    onToggleFavorite={onToggleFavorite}
-                />
-                <ProductCard 
-                    product={products[2]} 
-                    onSelectProduct={onSelectProduct} 
-                    isSelected={selectedProductId === products[2].id}
-                    isFavorite={favoriteProductsIds.includes(products[2].id)}
-                    onToggleFavorite={onToggleFavorite}
-                />
-                <ProductCard 
-                    product={products[3]} 
-                    onSelectProduct={onSelectProduct} 
-                    isSelected={selectedProductId === products[3].id}
-                    isFavorite={favoriteProductsIds.includes(products[3].id)}
-                    onToggleFavorite={onToggleFavorite}
-                />
-                <ProductCard 
-                    product={products[4]} 
-                    onSelectProduct={onSelectProduct} 
-                    isSelected={selectedProductId === products[4].id}
-                    isFavorite={favoriteProductsIds.includes(products[0].id)}
-                    onToggleFavorite={onToggleFavorite}
-                />
+                {visibleProducts.map((product) => (
+                    <ProductCard
+                        key={product.id}
+                        product={product}
+                        isSelected={selectedProductId === product.id}
+                        isFavorite={favoriteProductsIds.includes(product.id)}
+                        onSelectProduct={onSelectProduct}
+                        onToggleFavorite={onToggleFavorite}
+                    />
+                ))}
             </div>
         </section>
     )
